@@ -1,0 +1,1 @@
+{"version":3,"sources":["../src/TildaComponent.module.scss"],"sourcesContent":[".container {\n  width: 100%;\n  overflow: hidden;\n}\n\n.iframe {\n  border: none;\n  width: 100%;\n}"],"mappings":";AAAA,CAAC;AACC,SAAO;AACP,YAAU;AACZ;AAEA,CAAC;AACC,UAAQ;AACR,SAAO;AACT;","names":[]}

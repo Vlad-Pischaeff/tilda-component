@@ -1,0 +1,10 @@
+/* src/TildaComponent.module.scss */
+.container {
+  width: 100%;
+  overflow: hidden;
+}
+.iframe {
+  border: none;
+  width: 100%;
+}
+/*# sourceMappingURL=index.css.map */
