@@ -1,0 +1,42 @@
+{
+  "name": "tilda-component",
+  "version": "1.0.0",
+  "description": "React компонент для встраивания Tilda блоков через iframe",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "prepare": "npm run build"
+  },
+  "peerDependencies": {
+    "react": ">=17",
+    "react-dom": ">=17"
+  },
+  "devDependencies": {
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
+    "tsup": "^7.0.0",
+    "typescript": "^5.0.0",
+    "sass": "^1.70.0"
+  },
+  "license": "MIT",
+  "keywords": [
+    "react",
+    "iframe",
+    "tilda",
+    "component"
+  ],
+  "homepage": "https://github.com/Vlad-Pischaeff/tilda-component#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Vlad-Pischaeff/tilda-component.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Vlad-Pischaeff/tilda-component/issues"
+  }
+}
