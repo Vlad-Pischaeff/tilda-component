@@ -18,9 +18,9 @@ type IframeElement = HTMLIFrameElement & {
   initHTML?: () => string;
 };
 
-type Props = { tilda: Tilda };
+type Props = { tilda: Tilda; className?: string };
 
-export const TildaComponent = ({ tilda }: Props) => {
+export const TildaComponent = ({ tilda, className }: Props) => {
   const ref = useRef<IframeElement>(null);
 
   const getGeneratedPageURL = ({ cssArr, jsArr, id }: BlobProps) => {
@@ -30,10 +30,14 @@ export const TildaComponent = ({ tilda }: Props) => {
     };
 
     const getCSS = (cssArray: string[]) =>
-      cssArray.map((css) => `<link rel="stylesheet" type="text/css" href="${css}" />`).join(" ");
+      cssArray
+        .map((css) => `<link rel="stylesheet" type="text/css" href="${css}" />`)
+        .join(" ");
 
     const getJS = (jsArray: string[]) =>
-      jsArray.map((js) => `<script src="${js}" blocking="render"></script>`).join(" ");
+      jsArray
+        .map((js) => `<script src="${js}" blocking="render"></script>`)
+        .join(" ");
 
     const source = `
       <html>
@@ -80,7 +84,7 @@ export const TildaComponent = ({ tilda }: Props) => {
       url = getGeneratedPageURL({
         cssArr: tilda.css,
         jsArr: tilda.js,
-        id: tilda.promoBlockId
+        id: tilda.promoBlockId,
       });
       ref.current.src = url;
       ref.current.initHTML = () => tilda.content;
@@ -91,7 +95,7 @@ export const TildaComponent = ({ tilda }: Props) => {
   }, [tilda]);
 
   return (
-    <div className={styles.container}>
+    <div className={className ? className : styles.container}>
       <iframe
         ref={ref}
         className={styles.iframe}
