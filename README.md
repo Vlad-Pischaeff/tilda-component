@@ -54,7 +54,7 @@ export default App;
 | `data` | `Tilda` | Yes | - | Tilda page data with content, styles and scripts |
 | `className` | `string` | No | - | Additional CSS class for the container |
 | `onLoad` | `() => void` | No | - | Callback fired when the page is loaded |
-| `onError` | `(error: Error) => void` | No | - | Callback fired when an error occurs |
+| `onError` | `(error: ErrorEvent) => void` | No | - | Callback fired when an error occurs |
 
 ### Types
 
@@ -118,7 +118,7 @@ function MyPageWithErrorHandling() {
     content: apiResponse.result.html
   });
 
-  const handleError = (err: Error) => {
+  const handleError = (err: ErrorEvent) => {
     console.error('Tilda component error:', err);
     setError(err.message);
   };

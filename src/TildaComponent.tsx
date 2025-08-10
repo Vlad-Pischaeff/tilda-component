@@ -21,7 +21,7 @@ type IframeElement = HTMLIFrameElement & {
 type Props = {
   tilda: Tilda;
   className?: string;
-  onError?: () => void;
+  onError?: (_error: ErrorEvent) => void;
   onLoad?: () => void;
 };
 
@@ -117,7 +117,7 @@ export const TildaComponent = ({
   useEffect(() => {
     const handleError =
       onError ||
-      ((error: Event) => {
+      ((error: ErrorEvent) => {
         console.error('Iframe loading failed:', error);
       });
     const iframe = ref.current;
