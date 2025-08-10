@@ -1,6 +1,6 @@
 {
   "name": "tilda-component",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "React компонент для встраивания Tilda блоков через iframe",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
