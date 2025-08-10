@@ -18,9 +18,13 @@ type IframeElement = HTMLIFrameElement & {
   initHTML?: () => string;
 };
 
-type Props = { tilda: Tilda; className?: string };
+type Props = {
+  tilda: Tilda;
+  className?: string;
+  onError?: () => void;
+};
 
-export const TildaComponent = ({ tilda, className }: Props) => {
+export const TildaComponent = ({ tilda, className, onError }: Props) => {
   const ref = useRef<IframeElement>(null);
 
   const getGeneratedPageURL = ({ cssArr, jsArr, id }: BlobProps) => {
@@ -31,13 +35,13 @@ export const TildaComponent = ({ tilda, className }: Props) => {
 
     const getCSS = (cssArray: string[]) =>
       cssArray
-        .map((css) => `<link rel="stylesheet" type="text/css" href="${css}" />`)
-        .join(" ");
+        .map(css => `<link rel="stylesheet" type="text/css" href="${css}" />`)
+        .join(' ');
 
     const getJS = (jsArray: string[]) =>
       jsArray
-        .map((js) => `<script src="${js}" blocking="render"></script>`)
-        .join(" ");
+        .map(js => `<script src="${js}" blocking="render"></script>`)
+        .join(' ');
 
     const source = `
       <html>
@@ -75,12 +79,17 @@ export const TildaComponent = ({ tilda, className }: Props) => {
       </html>
     `;
 
-    return getBlobURL(source, "text/html");
+    return getBlobURL(source, 'text/html');
   };
 
   useEffect(() => {
-    let url = "";
-    if (ref.current) {
+    let url = '';
+    if (ref.current && tilda.content) {
+      // Отзываем предыдущий URL
+      if (ref.current.src.startsWith('blob:')) {
+        URL.revokeObjectURL(ref.current.src);
+      }
+
       url = getGeneratedPageURL({
         cssArr: tilda.css,
         jsArr: tilda.js,
@@ -93,6 +102,20 @@ export const TildaComponent = ({ tilda, className }: Props) => {
       if (url) URL.revokeObjectURL(url);
     };
   }, [tilda]);
+
+  useEffect(() => {
+    const handleError = onError
+      ? onError
+      : () => {
+          console.error('Iframe loading failed');
+        };
+    const iframe = ref.current;
+
+    if (iframe) {
+      iframe.addEventListener('error', handleError);
+      return () => iframe.removeEventListener('error', handleError);
+    }
+  }, []);
 
   return (
     <div className={className ? className : styles.container}>

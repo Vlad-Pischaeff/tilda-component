@@ -6,7 +6,7 @@ var TildaComponent_module_default = {};
 
 // src/TildaComponent.tsx
 import { jsx } from "react/jsx-runtime";
-var TildaComponent = ({ tilda, className }) => {
+var TildaComponent = ({ tilda, className, onError }) => {
   const ref = useRef(null);
   const getGeneratedPageURL = ({ cssArr, jsArr, id }) => {
     const getBlobURL = (code, type) => {
@@ -54,7 +54,10 @@ var TildaComponent = ({ tilda, className }) => {
   };
   useEffect(() => {
     let url = "";
-    if (ref.current) {
+    if (ref.current && tilda.content) {
+      if (ref.current.src.startsWith("blob:")) {
+        URL.revokeObjectURL(ref.current.src);
+      }
       url = getGeneratedPageURL({
         cssArr: tilda.css,
         jsArr: tilda.js,
@@ -68,6 +71,16 @@ var TildaComponent = ({ tilda, className }) => {
         URL.revokeObjectURL(url);
     };
   }, [tilda]);
+  useEffect(() => {
+    const handleError = onError ? onError : () => {
+      console.error("Iframe loading failed");
+    };
+    const iframe = ref.current;
+    if (iframe) {
+      iframe.addEventListener("error", handleError);
+      return () => iframe.removeEventListener("error", handleError);
+    }
+  }, []);
   return /* @__PURE__ */ jsx("div", { className: className ? className : TildaComponent_module_default.container, children: /* @__PURE__ */ jsx(
     "iframe",
     {
