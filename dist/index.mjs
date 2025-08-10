@@ -72,7 +72,7 @@ var TildaComponent = ({ tilda, className }) => {
     "iframe",
     {
       ref,
-      className: TildaComponent_module_default.iframe,
+      style: { width: "100%" },
       id: `iframe${tilda.promoBlockId}`
     }
   ) });

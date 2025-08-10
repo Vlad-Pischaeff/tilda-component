@@ -98,7 +98,7 @@ export const TildaComponent = ({ tilda, className }: Props) => {
     <div className={className ? className : styles.container}>
       <iframe
         ref={ref}
-        className={styles.iframe}
+        style={{ width: '100%' }}
         id={`iframe${tilda.promoBlockId}`}
       />
     </div>
