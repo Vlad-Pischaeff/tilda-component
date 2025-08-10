@@ -10,7 +10,8 @@ type Props = {
     tilda: Tilda;
     className?: string;
     onError?: () => void;
+    onLoad?: () => void;
 };
-declare const TildaComponent: ({ tilda, className, onError }: Props) => react_jsx_runtime.JSX.Element;
+declare const TildaComponent: ({ tilda, className, onError, onLoad, }: Props) => react_jsx_runtime.JSX.Element;
 
 export { Tilda, TildaComponent };

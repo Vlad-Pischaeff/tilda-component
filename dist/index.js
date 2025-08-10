@@ -32,7 +32,12 @@ var TildaComponent_module_default = {};
 
 // src/TildaComponent.tsx
 var import_jsx_runtime = require("react/jsx-runtime");
-var TildaComponent = ({ tilda, className, onError }) => {
+var TildaComponent = ({
+  tilda,
+  className,
+  onError,
+  onLoad
+}) => {
   const ref = (0, import_react.useRef)(null);
   const getGeneratedPageURL = ({ cssArr, jsArr, id }) => {
     const getBlobURL = (code, type) => {
@@ -63,6 +68,11 @@ var TildaComponent = ({ tilda, className, onError }) => {
               if (document.readyState === "complete") {
                 const html = IFRAME.initHTML();
                 setHTML(html);
+                // \u0423\u0432\u0435\u0434\u043E\u043C\u043B\u044F\u0435\u043C \u0440\u043E\u0434\u0438\u0442\u0435\u043B\u044C\u0441\u043A\u043E\u0435 \u043E\u043A\u043D\u043E \u043E \u043F\u043E\u043B\u043D\u043E\u0439 \u0437\u0430\u0433\u0440\u0443\u0437\u043A\u0435 \u043A\u043E\u043D\u0442\u0435\u043D\u0442\u0430
+                window.parent.postMessage({ 
+                  type: 'TILDA_CONTENT_LOADED', 
+                  blockId: ${id} 
+                }, '*');
               }
             };
             const resizeObserver = new ResizeObserver((entries) => {
@@ -98,13 +108,33 @@ var TildaComponent = ({ tilda, className, onError }) => {
     };
   }, [tilda]);
   (0, import_react.useEffect)(() => {
-    const handleError = onError ? onError : () => {
-      console.error("Iframe loading failed");
-    };
+    const handleError = onError || ((error) => {
+      console.error("Iframe loading failed:", error);
+    });
     const iframe = ref.current;
     if (iframe) {
       iframe.addEventListener("error", handleError);
       return () => iframe.removeEventListener("error", handleError);
+    }
+  }, [onError]);
+  (0, import_react.useEffect)(() => {
+    const handleMessage = (event) => {
+      if (event.data.type === "TILDA_CONTENT_LOADED" && event.data.blockId === tilda.promoBlockId) {
+        if (onLoad)
+          onLoad();
+      }
+    };
+    window.addEventListener("message", handleMessage);
+    return () => window.removeEventListener("message", handleMessage);
+  }, [onLoad, tilda.promoBlockId]);
+  (0, import_react.useEffect)(() => {
+    const iframe = ref.current;
+    const handleIframeLoad = () => {
+      console.log("Iframe DOM loaded");
+    };
+    if (iframe) {
+      iframe.addEventListener("load", handleIframeLoad);
+      return () => iframe.removeEventListener("load", handleIframeLoad);
     }
   }, []);
   return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: className ? className : TildaComponent_module_default.container, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(

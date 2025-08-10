@@ -22,9 +22,15 @@ type Props = {
   tilda: Tilda;
   className?: string;
   onError?: () => void;
+  onLoad?: () => void;
 };
 
-export const TildaComponent = ({ tilda, className, onError }: Props) => {
+export const TildaComponent = ({
+  tilda,
+  className,
+  onError,
+  onLoad,
+}: Props) => {
   const ref = useRef<IframeElement>(null);
 
   const getGeneratedPageURL = ({ cssArr, jsArr, id }: BlobProps) => {
@@ -65,6 +71,11 @@ export const TildaComponent = ({ tilda, className, onError }: Props) => {
               if (document.readyState === "complete") {
                 const html = IFRAME.initHTML();
                 setHTML(html);
+                // Уведомляем родительское окно о полной загрузке контента
+                window.parent.postMessage({ 
+                  type: 'TILDA_CONTENT_LOADED', 
+                  blockId: ${id} 
+                }, '*');
               }
             };
             const resizeObserver = new ResizeObserver((entries) => {
@@ -104,16 +115,47 @@ export const TildaComponent = ({ tilda, className, onError }: Props) => {
   }, [tilda]);
 
   useEffect(() => {
-    const handleError = onError
-      ? onError
-      : () => {
-          console.error('Iframe loading failed');
-        };
+    const handleError =
+      onError ||
+      ((error: Event) => {
+        console.error('Iframe loading failed:', error);
+      });
     const iframe = ref.current;
 
     if (iframe) {
       iframe.addEventListener('error', handleError);
       return () => iframe.removeEventListener('error', handleError);
+    }
+  }, [onError]);
+
+  /** Обработка сообщений от iframe для отслеживания загрузки контента */
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      if (
+        event.data.type === 'TILDA_CONTENT_LOADED' &&
+        event.data.blockId === tilda.promoBlockId
+      ) {
+        // Вызываем onLoad когда контент полностью загружен
+        if (onLoad) onLoad();
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, [onLoad, tilda.promoBlockId]);
+
+  /** Дополнительный обработчик для события load самого iframe (до загрузки контента) */
+  useEffect(() => {
+    const iframe = ref.current;
+
+    const handleIframeLoad = () => {
+      // Этот обработчик срабатывает когда iframe загрузился, но контент еще может грузиться
+      console.log('Iframe DOM loaded');
+    };
+
+    if (iframe) {
+      iframe.addEventListener('load', handleIframeLoad);
+      return () => iframe.removeEventListener('load', handleIframeLoad);
     }
   }, []);
 
